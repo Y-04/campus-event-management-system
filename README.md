@@ -84,9 +84,8 @@ git branch -M main
 git push -u origin main
 ```
 
-## Security & next steps
+## Notes and future improvements
 
 - Replace `SECRET_KEY` with a secure value for production.
 - Use a real database server (MySQL/Postgres) for production and set `DATABASE_URL` accordingly.
 - Review `Backend/static/posters/` and `Frontend/Images/` before committing large media files — consider using Git LFS or hosting images externally.
-
