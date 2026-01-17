@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="./Images/CEMSlogo.jpg" type="image/jpg">
+</head>
+
+<body>
+    <nav>
+        <div class="nav-left">
+            <img src="Images/CEMSlogo.jpg" alt="Logo">
+            <span>FestoHolic</span>
+        </div>
+        <ul>
+            <li><a href="home.html"><img class="nav-icon" src="Images/homelogo2.png" alt="Home">Home</a></li>
+            <li><a href="student_dashboard.html"><img class="nav-icon"  src="./Images/user_logo.png" alt="user">My Events</a></li>
+            <li><a href="calendercode1.html"><img class="nav-icon" src="./Images/eventcal_logo.png" alt="Event Calendar">Event Calendar</a></li>
+            <li><a href="#" onclick="logout()"><img class="nav-icon" src="Images/logout_logo.png"
+                        alt="Logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <h2>My Registered Events</h2>
+    <button onclick="clearHistory()">Clear History</button>
+    <ul id="registered-events"></ul>
+
+    <h2>Upcoming Events</h2>
+    <ul id="upcoming-events"></ul>
+
+    <h2>Past Events</h2>
+    <ul id="past-events"></ul>
+
+    <div id="eventDetailsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('eventDetailsModal')">&times;</span>
+            <h3 class="modal-title"></h3>
+            <p class="modal-tagline"></p>
+            <p class="modal-date"></p>
+            <img class="modal-poster" src="" alt="Event Poster"
+                style="max-width: 100%; max-height: 300px; object-fit: contain;">
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script>
+        async function clearHistory() {
+            if (!confirm("Are you sure you want to clear your event history?")) {
+                return;
+            }
+
+            try {
+                let response = await fetch("http://127.0.0.1:5000/student/clear_history", {
+                    method: "DELETE",
+                    credentials: "include" // Include session cookies
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to clear history");
+                }
+
+                let data = await response.json();
+                alert(data.message);
+
+                // Refresh the registered events
+                const username = sessionStorage.getItem("username");
+                fetchRegisteredEvents(username);
+            } catch (error) {
+                console.error("Error clearing history:", error.message);
+                alert("Failed to clear history. Please try again.");
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Event Calendar</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Remove or comment out the <style>...</style> block in the <head> -->
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+      <img src="Images/CEMSlogo.jpg" alt="Logo">
+      <span>FestoHolic</span>
+    </div>
+    <ul>
+      <li><a href="home.html"><img class="nav-icon" src="Images/homelogo2.png" alt="Home">Home</a></li>
+      <li><a href="student_dashboard.html"><img class="nav-icon" src="./Images/user_logo.png" alt="user">My Dashboard</a></li>
+      <li><a href="calendercode1.html"><img class="nav-icon" src="./Images/eventcal_logo.png" alt="Event Calendar">Event Calendar</a></li>
+      <li><a href="#" onclick="logout()"><img class="nav-icon" src="Images/logout_logo.png" alt="Logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="calendar-container">
+    <div id="calendar"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        const calendarEl = document.getElementById('calendar');
+
+        // Fetch events from the backend
+        async function fetchEvents() {
+            try {
+                const response = await fetch("http://127.0.0.1:5000/events/calendar");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Error fetching events:", error.message);
+                return [];
+            }
+        }
+
+        const events = await fetchEvents();
+
+        // Initialize the calendar
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: events, // Use the fetched events
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            eventClick: function (info) {
+                alert(`Event: ${info.event.title}\nDate: ${info.event.start.toISOString().split('T')[0]}`);
+            }
+        });
+
+        calendar.render();
+
+        // Refresh the calendar periodically
+        setInterval(async () => {
+            const updatedEvents = await fetchEvents();
+            calendar.removeAllEvents(); // Clear existing events
+            calendar.addEventSource(updatedEvents); // Add updated events
+        }, 60000); // Refresh every 60 seconds
+    });
+
+    function logout() {
+        alert('Logged out successfully!');
+    }
+  </script>
+</body>
+</html>

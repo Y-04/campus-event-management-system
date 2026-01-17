@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="./Images/CEMSlogo.jpg">
+</head>
+
+<body>
+    <nav>
+        <div class="nav-left">
+            <img src="Images/CEMSlogo.jpg" alt="Logo" height="40px" width="40px">
+            <span>FestoHolic</span>
+        </div>
+        <ul>
+            <li><a href="home.html"><img class="nav-icon" src="Images/homelogo2.png" alt="Home">Home</a></li>
+            <li id="adminPanelLink"><a href="admin_dashboard.html"><img class="nav-icon" src="Images/admin_logo.png"
+                        alt="Admin">Admin Panel</a></li>
+            <li><a href="admin_stats.html"><img class="nav-icon" src="./Images/stats_logo.png" alt="Stats">Event Stats</a></li>
+            <!-- <li><a href="calendercode1.html">Event Calendar</a></li> -->
+            <li><a href="#" onclick="logout()"><img class="nav-icon" src="Images/logout_logo.png"
+                        alt="Logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <h2>Manage Events</h2>
+    <div>
+        <input type="text" id="event-title" placeholder="Event Title">
+        <input type="date" id="event-date">
+        <input type="file" id="event-poster">
+        <button onclick="addEvent()">Add Event</button>
+    </div>
+
+    <section id="admin-event-list">
+        <!-- Admin-specific event management will be dynamically populated -->
+        <div class="event-card">
+            <h3>Event Title</h3>
+            <p>Date: YYYY-MM-DD</p>
+            <button onclick="editEvent(eventId)">Edit</button>
+            <button onclick="deleteEvent(eventId)">Delete</button>
+        </div>
+    </section>
+
+    <!-- Edit Event Modal -->
+    <div id="editEventModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editEventModal')">&times;</span>
+            <h3>Edit Event</h3>
+            <form id="editEventForm" onsubmit="event.preventDefault(); submitEditEvent();">
+                <label for="edit-event-title">Title:</label>
+                <input type="text" id="edit-event-title" name="title" required>
+
+                <label for="edit-event-date">Date:</label>
+                <input type="date" id="edit-event-date" name="date" required>
+
+                <label for="edit-event-poster">Poster:</label>
+                <input type="file" id="edit-event-poster" name="poster">
+
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if the user is an admin
+            const role = sessionStorage.getItem('role');
+            console.log("Role:", role); // Debug log
+            if (role !== 'admin') {
+                // Redirect non-admin users to the access denied page
+                window.location.href = 'denied.html';
+            }
+        });
+
+        async function addEvent() {
+            const title = document.getElementById("event-title").value;
+            const date = document.getElementById("event-date").value;
+
+            if (!title || !date) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            try {
+                let response = await fetch("http://127.0.0.1:5000/admin/add_event", {
+                    method: "POST",
+                    body: JSON.stringify({ title, date }),
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include"
+                });
+
+                if (!response.ok) throw new Error("Failed to add event");
+
+                let data = await response.json();
+                alert(data.message);
+
+                // Refresh the calendar after adding the event
+                window.location.href = "calendercode1.html"; // Redirect to the calendar page
+            } catch (error) {
+                console.error("Error adding event:", error);
+                alert("Failed to add event. Please try again.");
+            }
+        }
+
+        async function editEvent(eventId) {
+            const modal = document.getElementById('editEventModal');
+            modal.style.display = 'block';
+
+            const closeModal = (modalId) => {
+                document.getElementById(modalId).style.display = 'none';
+            };
+
+            async function submitEditEvent() {
+                const title = document.getElementById("edit-event-title").value;
+                const date = document.getElementById("edit-event-date").value;
+                const poster = document.getElementById("edit-event-poster").files[0];
+
+                if (!title || !date || !poster) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("title", title);
+                formData.append("date", date);
+                formData.append("poster", poster);
+
+                try {
+                    let response = await fetch(`http://127.0.0.1:5000/admin/edit_event/${eventId}`, {
+                        method: "POST",
+                        body: formData,
+                        credentials: "include"
+                    });
+
+                    if (!response.ok) throw new Error("Failed to edit event");
+
+                    let data = await response.json();
+                    alert(data.message);
+
+                    // Refresh the event list after editing
+                    location.reload();
+                } catch (error) {
+                    console.error("Error editing event:", error);
+                    alert("Failed to edit event. Please try again.");
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+venv/
+.env
+.env.*
+.envrc
+.venv/
+ENV/
+env/
+
+# Pytest/cache
+.pytest_cache/
+.coverage
+
+# Flask instance folder (contains local DB, secrets)
+Backend/instance/
+
+# Migrations (if you regenerate locally ignore compiled files)
+*.pyc
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (frontend builds, if added later)
+node_modules/
+
+# Logs
+*.log
+
+# Windows
+desktop.ini
+
+# Byte-compiled / distribution
+build/
+dist/
+*.egg-info/
+
+# Secrets
+*.pem
+*.key

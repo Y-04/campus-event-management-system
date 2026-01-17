@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Stats</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <img src="Images/CEMSlogo.jpg" alt="Logo">
+            <span>FestoHolic</span>
+        </div>
+        <ul>
+            <li><a href="home.html"><img class="nav-icon" src="Images/homelogo2.png" alt="Home">Home</a></li>
+            <li id="adminPanelLink"><a href="admin_dashboard.html"><img class="nav-icon" src="Images/admin_logo.png" alt="Admin">Admin Panel</a></li>
+            <li><a href="admin_stats.html"><img class="nav-icon" src="./Images/stats_logo.png" alt="Stats">Event Stats</a></li>
+            <!-- <li><a href="calendercode1.html">Event Calendar</a></li> -->
+            <li><a href="#" onclick="logout()"><img class="nav-icon" src="Images/logout_logo.png" alt="Logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <h2>Event Registration Stats</h2>
+    <table id="stats-table">
+        <thead>
+            <tr>
+                <th>Event Title</th>
+                <th>Total Registrations</th>
+                <th>1st Year</th>
+                <th>2nd Year</th>
+                <th>3rd Year</th>
+                <th>4th Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be dynamically populated -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                let response = await fetch('http://127.0.0.1:5000/api/admin/stats');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch stats');
+                }
+
+                let stats = await response.json();
+                let tableBody = document.querySelector('#stats-table tbody');
+
+                stats.forEach(stat => {
+                    let row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${stat.event_title}</td>
+                        <td>${stat.total_registrations}</td>
+                        <td>${stat.year_wise["1st Year"]}</td>
+                        <td>${stat.year_wise["2nd Year"]}</td>
+                        <td>${stat.year_wise["3rd Year"]}</td>
+                        <td>${stat.year_wise["4th Year"]}</td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        });
+
+        function logout() {
+            alert('Logged out successfully!');
+        }
+    </script>
+</body>
+</html>

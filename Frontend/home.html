@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestoHolic - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="./Images/CEMSlogo.jpg">
+</head>
+
+<body>
+    <nav>
+        <div class="nav-left">
+            <img src="Images/CEMSlogo.jpg" alt="Logo">
+            <span>FestoHolic</span>
+        </div>
+        <ul>
+            <li><a href="home.html"><img class="nav-icon" src="Images/homelogo2.png" alt="Home">Home</a></li>
+            <li id="studentDashboardLink" style="display: none;"><a href="student_dashboard.html"><img class="nav-icon"
+                        src="./Images/user_logo.png" alt="user">My Events</a></li>
+            <li id="adminPanelLink" style="display: none;"><a href="admin_dashboard.html"><img class="nav-icon"
+                        src="Images/admin_logo.png" alt="Admin">Admin Panel</a></li>
+            <li><a href="calendercode1.html"><img class="nav-icon" src="./Images/eventcal_logo.png"
+                        alt="Event Calendar">Event Calendar</a></li>
+            <li><a href="#" onclick="logout()"><img class="nav-icon" src="Images/logout_logo.png"
+                        alt="Logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h2>Upcoming Events</h2>
+        <p>Check out the latest campus happenings!</p>
+    </header>
+
+    <section id="event-list">
+        <!-- Upcoming events will be dynamically populated -->
+    </section>
+
+    <section id="past-event-list">
+        <h2>Past Events</h2>
+        <!-- Past events will be dynamically populated -->
+    </section>
+
+    <!-- Event Details Modal -->
+    <div id="eventDetailsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('eventDetailsModal')">&times;</span>
+            <h3 class="modal-title"></h3>
+            <p class="modal-tagline"></p>
+            <p class="modal-date"></p>
+            <img class="modal-poster" src="" alt="Event Poster"
+                style="max-width: 100%; max-height: 300px; object-fit: contain;">
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registrationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registrationModal')">&times;</span>
+            <h3>Register for Event</h3>
+            <form id="registrationForm">
+                <label for="rollno">Roll Number:</label>
+                <input type="text" id="rollno" readonly>
+                <label for="year">Year of Study:</label>
+                <select id="year">
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                </select>
+                <button type="button" onclick="submitRegistration()">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const role = sessionStorage.getItem("role");
+            const username = sessionStorage.getItem("username");
+            const studentDashboardLink = document.getElementById("studentDashboardLink");
+            const adminPanelLink = document.getElementById("adminPanelLink");
+
+            // Debug logs
+            console.log("role:", role, "username:", username);
+
+            // Show or hide navigation links based on the user's role
+            if (role === "student") {
+                if (studentDashboardLink) studentDashboardLink.style.display = "block";
+                if (adminPanelLink) adminPanelLink.style.display = "none";
+                // Only call fetchRegisteredEvents for students
+                if (username) {
+                    console.log("Calling fetchRegisteredEvents for student:", username);
+                    fetchRegisteredEvents(username);
+                } else {
+                    console.warn("No username found for student.");
+                }
+            } else if (role === "admin") {
+                if (adminPanelLink) adminPanelLink.style.display = "block";
+                if (studentDashboardLink) studentDashboardLink.style.display = "none";
+            } else {
+                // Hide both links for guests
+                if (studentDashboardLink) studentDashboardLink.style.display = "none";
+                if (adminPanelLink) adminPanelLink.style.display = "none";
+            }
+
+            // Fetch all events for the homepage
+            fetchEvents(); // Ensure this is called after DOM is ready
+        });
+    </script>
+</body>
+
+</html>
