@@ -90,7 +90,3 @@ git push -u origin main
 - Use a real database server (MySQL/Postgres) for production and set `DATABASE_URL` accordingly.
 - Review `Backend/static/posters/` and `Frontend/Images/` before committing large media files — consider using Git LFS or hosting images externally.
 
-If you want, I can also:
-- Create a GitHub Actions workflow for tests/CI
-- Prepare a .gitattributes or add Git LFS config for large images
-- Commit these files and create the initial repo for you
