@@ -1,6 +1,5 @@
-# Campus Event Management System
-
-Small Flask backend + static frontend for managing campus events. 
+# Festoholic – Campus Event Management System
+Festoholic is a Campus Event Management System built to manage college events with role-based access for students and admins. 
 This project was built as a learning-focused full-stack web application to explore Flask, databases, and role-based access.
 
 
